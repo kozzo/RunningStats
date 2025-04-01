@@ -1,11 +1,22 @@
-require('dotenv').config();  // Load environment variables
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import fastifyMongo from '@fastify/mongodb'; // Import fastify-mongodb
+import dotenv from 'dotenv';
 
-const fastify = require('fastify')({ logger: true });
+dotenv.config();
 
-// Register fastify-mongodb plugin
-fastify.register(require('fastify-mongodb'), {
+const fastify = Fastify();
+
+// Enable CORS to allow frontend requests
+fastify.register(cors, {
+  origin: 'http://localhost:5173', // Allow only your React app
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these methods
+});
+
+// Register MongoDB plugin
+fastify.register(fastifyMongo, {
   forceClose: true,
-  url: process.env.MONGO_URI  // Uses the URI from .env
+  url: process.env.MONGO_URI, // Use your MongoDB URI from .env
 });
 
 // Test database connection
